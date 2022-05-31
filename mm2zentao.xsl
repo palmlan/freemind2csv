@@ -129,6 +129,32 @@
 				</xsl:for-each>
 				<!-- 当前用例的步骤已全部输出，引号结束。 -->
 				<xsl:text>"</xsl:text>
+				
+				<!-- 新增一列输出每个步骤的预期行为，按禅道格式编号与步骤对应 -->
+				<!-- 按照csv格式新增一列，引号开始 -->
+				<xsl:text>,"</xsl:text>
+
+				<xsl:for-each select="descendant::node[not(node) and @TEXT]">
+					<!-- 按禅道csv格式进行编号 -->
+					<xsl:if test="not($skipNumber)">
+						<xsl:number format="1. " value="position()" level="any" from="node[contains(@TEXT, $CaseTitleTag)]"/>
+					</xsl:if>
+
+					<xsl:call-template name="string-replace-all">
+						<xsl:with-param name="text" select="substring-after(@TEXT, ' &amp; ')"/>
+						<xsl:with-param name="replace" select="$sQuote"/>
+						<xsl:with-param name="by" select="$dQuotes"/>
+					</xsl:call-template>
+
+					<!-- 按照禅道格式预期行为之间插入换行 -->
+					<xsl:if test="position()!=last()">
+						<xsl:text>&#xa;</xsl:text>
+					</xsl:if>
+				</xsl:for-each>
+
+				<!-- 当前用例的步骤的预期行为已全部输出，引号结束。 -->
+				<xsl:text>"</xsl:text>
+
 			</xsl:if>
 			
 			<xsl:text>&#xa;</xsl:text>
