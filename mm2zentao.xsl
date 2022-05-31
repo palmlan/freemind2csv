@@ -103,14 +103,11 @@
 				<!-- 按照csv格式新增一列，引号开始 -->
 				<xsl:text>,"</xsl:text>
 				
-				<!-- 选择每个步骤的叶子节点 -->
-				<xsl:for-each select=".//node[not(node)]">
-					
-					
-						<xsl:number format="1. "  level="any" from="node[contains(@TEXT, $CaseTitleTag)]"/>
-					<xsl:value-of select="@TEXT"/>
+				<!-- 选择每个步骤的非空叶子节点 -->
+				<xsl:for-each select="descendant::node[not(node) and @TEXT]">
 					<!-- 按禅道csv格式进行编号 -->
-					<!-- xsl:if test="not($skipNumber)">
+					<xsl:if test="not($skipNumber)">
+						<xsl:number format="1. " value="position()" level="any" from="node[contains(@TEXT, $CaseTitleTag)]"/>
 					</xsl:if>
 					
 					<xsl:if test="not(parent::node[contains(@TEXT, $CaseTitleTag)])">
@@ -123,7 +120,6 @@
 						<xsl:with-param name="by" select="$dQuotes"/>
 					</xsl:call-template>
 					
-					-->
 					<!-- 步骤不能使用长节点 -->				
 					<!-- 按照禅道格式步骤之间插入换行 -->
 					<xsl:if test="position()!=last()">
