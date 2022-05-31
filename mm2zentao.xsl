@@ -6,7 +6,7 @@
 	<xsl:variable name="sQuote">"</xsl:variable>
 	<xsl:variable name="dQuotes">""</xsl:variable>
 	
-	<!-- 字符串替换模板库 -->
+	<!-- 字符串替换公用模板库 -->
 	<xsl:template name="string-replace-all">
 		<xsl:param name="text"/>
 		<xsl:param name="replace"/>
@@ -54,11 +54,10 @@
 		</xsl:if>
 	</xsl:template>
 	
-	<!--
-	<xsl:template match="node[@TEXT]" mode="print-full-step">
+	<xsl:template match="node" mode="print-full-step">
 		
 		<xsl:if test="not(parent::node[contains(@TEXT, $CaseTitleTag)])">
-			<xsl:apply-templates select="parent::node[@TEXT]" mode="print-full-step"/>
+			<xsl:apply-templates select="parent::node" mode="print-full-step"/>
 		</xsl:if>
 		
 		<xsl:call-template name="string-replace-all">
@@ -67,7 +66,7 @@
 			<xsl:with-param name="by" select="$dQuotes"/>
 		</xsl:call-template>
 	</xsl:template>
-	-->
+
 	<!-- xsl:template match="/" mode="print-full-casetitle" / -->
 	
 	<!-- 主模板 -->
@@ -104,19 +103,19 @@
 				<!-- 按照csv格式新增一列，引号开始 -->
 				<xsl:text>,"</xsl:text>
 				
-				<xsl:for-each select="node[@TEXT]">
-				
+				<!-- 选择每个步骤的叶子节点 -->
+				<xsl:for-each select=".//node[not(node)]">
 					
-					<xsl:if test="not($skipNumber)">
-						<!-- 按禅道csv格式进行编号 -->
-						<xsl:number format="1. "/>
+					
+						<xsl:number format="1. "  level="any" from="node[contains(@TEXT, $CaseTitleTag)]"/>
+					<xsl:value-of select="@TEXT"/>
+					<!-- 按禅道csv格式进行编号 -->
+					<!-- xsl:if test="not($skipNumber)">
 					</xsl:if>
 					
-					<!--
-						<xsl:if test="not(parent::node[contains(@TEXT, $CaseTitleTag)])">
-							<xsl:apply-templates select="parent::node[@TEXT]" mode="print-full-step"/>
-						</xsl:if>
-					-->
+					<xsl:if test="not(parent::node[contains(@TEXT, $CaseTitleTag)])">
+						<xsl:apply-templates select="parent::node" mode="print-full-step"/>
+					</xsl:if>
 					
 					<xsl:call-template name="string-replace-all">
 						<xsl:with-param name="text" select="@TEXT"/>
@@ -124,6 +123,7 @@
 						<xsl:with-param name="by" select="$dQuotes"/>
 					</xsl:call-template>
 					
+					-->
 					<!-- 步骤不能使用长节点 -->				
 					<!-- 按照禅道格式步骤之间插入换行 -->
 					<xsl:if test="position()!=last()">
@@ -131,6 +131,7 @@
 					</xsl:if>
 					
 				</xsl:for-each>
+				<!-- 当前用例的步骤已全部输出，引号结束。 -->
 				<xsl:text>"</xsl:text>
 			</xsl:if>
 			
