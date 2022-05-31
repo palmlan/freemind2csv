@@ -113,9 +113,21 @@
 					<xsl:if test="not(parent::node[contains(@TEXT, $CaseTitleTag)])">
 						<xsl:apply-templates select="parent::node" mode="print-full-step"/>
 					</xsl:if>
+
+					<xsl:variable name="stepTextCheck" select="substring-before(@TEXT, ' &amp; ')"/>
+					<xsl:variable name="stepText">
+						<xsl:choose>
+							<xsl:when test="$stepTextCheck">
+								<xsl:value-of select="$stepTextCheck"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="@TEXT"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
 					
 					<xsl:call-template name="string-replace-all">
-						<xsl:with-param name="text" select="@TEXT"/>
+						<xsl:with-param name="text" select="$stepText"/>
 						<xsl:with-param name="replace" select="$sQuote"/>
 						<xsl:with-param name="by" select="$dQuotes"/>
 					</xsl:call-template>
